@@ -353,3 +353,83 @@ input:checked+.slider:before {
 .status-msg.visible {
   opacity: 1;
 }
+
+/* Schedule Section */
+.schedule-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.time-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.time-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.time-input {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  color: var(--text-main);
+  font-size: 13px;
+  font-family: inherit;
+  transition: border-color 0.2s, opacity 0.2s;
+  width: 100%;
+}
+
+.time-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.time-input:disabled {
+  cursor: not-allowed;
+}
+
+/* Chrome time input styling */
+.time-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
+.time-separator {
+  color: var(--text-muted);
+  font-size: 16px;
+  padding-top: 18px;
+}
+
+.schedule-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+.schedule-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.schedule-toggle-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+
+.schedule-toggle:hover .schedule-toggle-text {
+  color: var(--text-main);
+}

@@ -67,6 +67,36 @@
         <div class="hint-text" data-i18n="api_hint">Ключ хранится локально</div>
       </div>
 
+      <!-- Schedule Section -->
+      <div class="input-group">
+        <div class="label-row">
+          <label class="input-label" data-i18n="schedule_label">Время работы</label>
+          <div class="help-icon" id="scheduleHelpIcon">?
+            <div class="help-tooltip">
+              <strong data-i18n="schedule_help_title">Расписание работы:</strong>
+              <p data-i18n="schedule_help_desc">Укажите временной промежуток, когда блокер будет активен. Вне этого
+                времени видео не будут проверяться.</p>
+              <small data-i18n="schedule_help_note">✓ Оставьте пустым для работы 24/7</small>
+            </div>
+          </div>
+        </div>
+        <div class="schedule-inputs">
+          <div class="time-input-wrapper">
+            <label class="time-label" data-i18n="time_from">С</label>
+            <input type="time" id="scheduleFrom" class="time-input" value="09:00">
+          </div>
+          <div class="time-separator">—</div>
+          <div class="time-input-wrapper">
+            <label class="time-label" data-i18n="time_to">До</label>
+            <input type="time" id="scheduleTo" class="time-input" value="23:00">
+          </div>
+        </div>
+        <label class="schedule-toggle">
+          <input type="checkbox" id="scheduleEnabled">
+          <span class="schedule-toggle-text" data-i18n="schedule_enabled">Включить расписание</span>
+        </label>
+      </div>
+
     </main>
 
     <!-- Footer -->

@@ -12,7 +12,14 @@ const translations = {
     api_step4: 'Скопируйте ключ и вставьте сюда',
     api_free: '✓ Бесплатно до 1500 запросов/день',
     btn_save: 'Сохранить',
-    status_saved: 'Настройки сохранены!'
+    status_saved: 'Настройки сохранены!',
+    schedule_label: 'Время работы',
+    schedule_help_title: 'Расписание работы:',
+    schedule_help_desc: 'Укажите временной промежуток, когда блокер будет активен. Вне этого времени видео не будут проверяться.',
+    schedule_help_note: '✓ Оставьте пустым для работы 24/7',
+    time_from: 'С',
+    time_to: 'До',
+    schedule_enabled: 'Включить расписание'
   },
   en: {
     goals_label: 'My Goals',
@@ -27,7 +34,14 @@ const translations = {
     api_step4: 'Copy the key and paste here',
     api_free: '✓ Free up to 1500 requests/day',
     btn_save: 'Save',
-    status_saved: 'Settings saved!'
+    status_saved: 'Settings saved!',
+    schedule_label: 'Active Hours',
+    schedule_help_title: 'Schedule Settings:',
+    schedule_help_desc: 'Set the time range when the blocker will be active. Videos will not be checked outside this time.',
+    schedule_help_note: '✓ Leave empty for 24/7 operation',
+    time_from: 'From',
+    time_to: 'To',
+    schedule_enabled: 'Enable schedule'
   }
 };
 
@@ -38,12 +52,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const saveBtn = document.getElementById('saveBtn');
   const statusMsg = document.getElementById('status');
   const langSelect = document.getElementById('langSelect');
+  const scheduleFrom = document.getElementById('scheduleFrom');
+  const scheduleTo = document.getElementById('scheduleTo');
+  const scheduleEnabled = document.getElementById('scheduleEnabled');
 
   // Load Settings
-  chrome.storage.sync.get(['goals', 'apiKey', 'protectionEnabled', 'language'], (result) => {
+  chrome.storage.sync.get(['goals', 'apiKey', 'protectionEnabled', 'language', 'scheduleFrom', 'scheduleTo', 'scheduleEnabled'], (result) => {
     if (result.goals) goalsInput.value = result.goals;
     if (result.apiKey) apiKeyInput.value = result.apiKey;
     enableProtection.checked = result.protectionEnabled !== false;
+
+    // Load schedule settings
+    if (result.scheduleFrom) scheduleFrom.value = result.scheduleFrom;
+    if (result.scheduleTo) scheduleTo.value = result.scheduleTo;
+    scheduleEnabled.checked = result.scheduleEnabled === true;
+    updateScheduleInputsState();
 
     const currentLang = result.language || 'ru';
     langSelect.value = currentLang;
@@ -58,7 +81,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const lang = langSelect.value;
 
     chrome.storage.sync.set({
-      goals, apiKey, protectionEnabled, language: lang
+      goals,
+      apiKey,
+      protectionEnabled,
+      language: lang,
+      scheduleFrom: scheduleFrom.value,
+      scheduleTo: scheduleTo.value,
+      scheduleEnabled: scheduleEnabled.checked
     }, () => {
       const t = translations[lang] || translations['ru'];
       showStatus(t.status_saved);
@@ -78,6 +107,19 @@ document.addEventListener('DOMContentLoaded', () => {
   enableProtection.addEventListener('change', () => {
     chrome.storage.sync.set({ protectionEnabled: enableProtection.checked });
   });
+
+  // Schedule Toggle
+  scheduleEnabled.addEventListener('change', () => {
+    updateScheduleInputsState();
+  });
+
+  function updateScheduleInputsState() {
+    const isEnabled = scheduleEnabled.checked;
+    scheduleFrom.disabled = !isEnabled;
+    scheduleTo.disabled = !isEnabled;
+    scheduleFrom.style.opacity = isEnabled ? '1' : '0.5';
+    scheduleTo.style.opacity = isEnabled ? '1' : '0.5';
+  }
 
   function applyLanguage(lang) {
     const t = translations[lang] || translations['ru'];

@@ -417,6 +417,27 @@ OUTPUT JSON ONLY: {"allowed": true/false}` }]
         });
     }
 
+    // === SCHEDULE CHECK ===
+    function isWithinSchedule(scheduleFrom, scheduleTo) {
+        if (!scheduleFrom || !scheduleTo) return true; // No schedule set - always active
+
+        const now = new Date();
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+        const [fromHours, fromMinutes] = scheduleFrom.split(':').map(Number);
+        const [toHours, toMinutes] = scheduleTo.split(':').map(Number);
+
+        const fromTotalMinutes = fromHours * 60 + fromMinutes;
+        const toTotalMinutes = toHours * 60 + toMinutes;
+
+        // Handle overnight schedule (e.g., 22:00 - 06:00)
+        if (fromTotalMinutes > toTotalMinutes) {
+            return currentMinutes >= fromTotalMinutes || currentMinutes <= toTotalMinutes;
+        }
+
+        return currentMinutes >= fromTotalMinutes && currentMinutes <= toTotalMinutes;
+    }
+
     async function checkVideo() {
         const videoId = getVideoId();
         if (!videoId || videoId === currentVideoId || isChecking) return;
@@ -424,8 +445,18 @@ OUTPUT JSON ONLY: {"allowed": true/false}` }]
         currentVideoId = videoId;
         isChecking = true;
 
-        chrome.storage.sync.get(['protectionEnabled', 'goals', 'apiKey'], async (data) => {
+        chrome.storage.sync.get(['protectionEnabled', 'goals', 'apiKey', 'scheduleEnabled', 'scheduleFrom', 'scheduleTo'], async (data) => {
             if (data.protectionEnabled === false || !data.goals) { isChecking = false; return; }
+
+            // Проверка расписания
+            if (data.scheduleEnabled) {
+                if (!isWithinSchedule(data.scheduleFrom, data.scheduleTo)) {
+                    console.log('🎯 Goal Guardian: Outside scheduled hours - skipping check');
+                    isChecking = false;
+                    return;
+                }
+            }
+
             const title = await waitForTitle();
             if (!title) { isChecking = false; return; }
 
