@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="app-container">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="logo-icon">🎯</div>
+        <span class="logo-text">Goal Guardian</span>
+      </div>
+
+      <div class="header-controls">
+        <div class="lang-dropdown-wrapper">
+          <select id="langSelect" class="lang-select">
+            <option value="ru">RU</option>
+            <option value="en">EN</option>
+          </select>
+          <div class="select-arrow">▼</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="enableProtection">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+
+      <!-- Goals Section -->
+      <div class="input-group">
+        <label for="goals" class="input-label" data-i18n="goals_label">Мои Цели</label>
+        <textarea id="goals" class="text-area"
+          placeholder="Например: &#10;• Выучить React&#10;• Подготовиться к марафону"></textarea>
+      </div>
+
+      <!-- API Key Section -->
+      <div class="input-group">
+        <div class="label-row">
+          <label for="apiKey" class="input-label">Gemini API Key</label>
+          <div class="help-icon" id="helpIcon">?
+            <div class="help-tooltip" id="helpTooltip">
+              <strong data-i18n="api_help_title">Как получить API Key:</strong>
+              <ol>
+                <li data-i18n="api_step1">Перейдите на <a href="https://aistudio.google.com/apikey"
+                    target="_blank">aistudio.google.com/apikey</a></li>
+                <li data-i18n="api_step2">Войдите в Google аккаунт</li>
+                <li data-i18n="api_step3">Нажмите "Create API Key"</li>
+                <li data-i18n="api_step4">Скопируйте ключ и вставьте сюда</li>
+              </ol>
+              <small data-i18n="api_free">✓ Бесплатно до 1500 запросов/день</small>
+            </div>
+          </div>
+        </div>
+        <div class="api-input-wrapper">
+          <input type="password" id="apiKey" class="text-input" placeholder="AIzaSy...">
+          <div class="status-dot"></div>
+        </div>
+        <div class="hint-text" data-i18n="api_hint">Ключ хранится локально</div>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <button id="saveBtn" class="save-button" data-i18n="btn_save">
+        Сохранить
+      </button>
+      <div id="status" class="status-msg"></div>
+    </footer>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+
+</html>
