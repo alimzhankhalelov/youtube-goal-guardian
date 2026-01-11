@@ -19,7 +19,12 @@ const translations = {
     schedule_help_note: '✓ Оставьте пустым для работы 24/7',
     time_from: 'С',
     time_to: 'До',
-    schedule_enabled: 'Включить расписание'
+    schedule_enabled: 'Включить расписание',
+    timer_label: 'Таймер ожидания',
+    timer_help_title: 'Настройка таймера:',
+    timer_help_desc: 'Количество секунд до появления кнопки "Всё равно смотреть".',
+    timer_help_note: '✓ Чем больше время, тем сложнее обойти блокировку',
+    timer_seconds: 'сек'
   },
   en: {
     goals_label: 'My Goals',
@@ -41,7 +46,12 @@ const translations = {
     schedule_help_note: '✓ Leave empty for 24/7 operation',
     time_from: 'From',
     time_to: 'To',
-    schedule_enabled: 'Enable schedule'
+    schedule_enabled: 'Enable schedule',
+    timer_label: 'Skip Timer',
+    timer_help_title: 'Timer Settings:',
+    timer_help_desc: 'Seconds before the "Watch anyway" button appears.',
+    timer_help_note: '✓ Longer time = harder to bypass',
+    timer_seconds: 'sec'
   }
 };
 
@@ -55,9 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const scheduleFrom = document.getElementById('scheduleFrom');
   const scheduleTo = document.getElementById('scheduleTo');
   const scheduleEnabled = document.getElementById('scheduleEnabled');
+  const timerDurationInput = document.getElementById('timerDuration');
 
   // Load Settings
-  chrome.storage.sync.get(['goals', 'apiKey', 'protectionEnabled', 'language', 'scheduleFrom', 'scheduleTo', 'scheduleEnabled'], (result) => {
+  chrome.storage.sync.get(['goals', 'apiKey', 'protectionEnabled', 'language', 'scheduleFrom', 'scheduleTo', 'scheduleEnabled', 'timerDuration'], (result) => {
     if (result.goals) goalsInput.value = result.goals;
     if (result.apiKey) apiKeyInput.value = result.apiKey;
     enableProtection.checked = result.protectionEnabled !== false;
@@ -67,6 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (result.scheduleTo) scheduleTo.value = result.scheduleTo;
     scheduleEnabled.checked = result.scheduleEnabled === true;
     updateScheduleInputsState();
+
+    // Load timer duration (default 10)
+    timerDurationInput.value = result.timerDuration || 10;
 
     const currentLang = result.language || 'ru';
     langSelect.value = currentLang;
@@ -87,7 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
       language: lang,
       scheduleFrom: scheduleFrom.value,
       scheduleTo: scheduleTo.value,
-      scheduleEnabled: scheduleEnabled.checked
+      scheduleEnabled: scheduleEnabled.checked,
+      timerDuration: parseInt(timerDurationInput.value) || 10
     }, () => {
       const t = translations[lang] || translations['ru'];
       showStatus(t.status_saved);

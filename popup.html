@@ -97,6 +97,24 @@
         </label>
       </div>
 
+      <!-- Timer Duration Section -->
+      <div class="input-group">
+        <div class="label-row">
+          <label for="timerDuration" class="input-label" data-i18n="timer_label">Таймер ожидания</label>
+          <div class="help-icon">?
+            <div class="help-tooltip">
+              <strong data-i18n="timer_help_title">Настройка таймера:</strong>
+              <p data-i18n="timer_help_desc">Количество секунд до появления кнопки "Всё равно смотреть".</p>
+              <small data-i18n="timer_help_note">✓ Чем больше время, тем сложнее обойти блокировку</small>
+            </div>
+          </div>
+        </div>
+        <div class="timer-input-wrapper">
+          <input type="number" id="timerDuration" class="text-input timer-input" min="5" max="120" value="10">
+          <span class="timer-suffix" data-i18n="timer_seconds">сек</span>
+        </div>
+      </div>
+
     </main>
 
     <!-- Footer -->

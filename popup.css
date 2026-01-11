@@ -433,3 +433,20 @@ input:checked+.slider:before {
 .schedule-toggle:hover .schedule-toggle-text {
   color: var(--text-main);
 }
+
+/* Timer Duration Input */
+.timer-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.timer-input {
+  width: 80px !important;
+  text-align: center;
+}
+
+.timer-suffix {
+  font-size: 13px;
+  color: var(--text-muted);
+}

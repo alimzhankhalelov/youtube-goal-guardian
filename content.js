@@ -11,10 +11,13 @@
     let currentLanguage = 'en';
 
     // === LOCALIZATION ===
+    let timerDuration = 10; // Default timer seconds
+
     const translations = {
         ru: {
             checking: 'АНАЛИЗИРУЮ...',
             title_match: 'НЕСООТВЕТСТВИЕ ЦЕЛИ',
+            ai_says: '🤖 ИИ считает:',
             placeholder: 'Как это видео поможет вашей цели?',
             btn_open: 'ОТКРЫТЬ',
             btn_skip: 'Всё равно смотреть',
@@ -31,6 +34,7 @@
         en: {
             checking: 'ANALYZING...',
             title_match: 'GOAL MISMATCH',
+            ai_says: '🤖 AI thinks:',
             placeholder: 'How does this video help your goal?',
             btn_open: 'OPEN',
             btn_skip: 'Watch anyway',
@@ -136,7 +140,7 @@
 
     // === OVERLAY UI ===
 
-    function createOverlay(videoTitle, aiMessage = '', isLoading = false) {
+    function createOverlay(videoTitle, aiReason = '', isLoading = false) {
         removeOverlay();
         const videoContainer = getVideoContainer();
         if (!videoContainer) return;
@@ -160,19 +164,24 @@
                 <div class="goal-guardian-title" style="font-size: 18px; font-weight: 500;">${t.checking}</div>
             `;
         } else {
-            const errorHtml = aiMessage ? `<div class="goal-guardian-error">${escapeHtml(aiMessage)}</div>` : '';
+            // Show AI reason why video doesn't match goals
+            const aiReasonHtml = aiReason ? `
+                <div class="goal-guardian-ai-reason">
+                    <span class="ai-label">${t.ai_says}</span>
+                    <span class="ai-text">${escapeHtml(aiReason)}</span>
+                </div>` : '';
             centerDiv.innerHTML = `
                 <div class="goal-guardian-icon">⛔</div>
                 <h1 class="goal-guardian-title" data-i18n="title_match">${t.title_match}</h1>
                 <div class="goal-guardian-video-title">${escapeHtml(videoTitle)}</div>
-                ${errorHtml}
+                ${aiReasonHtml}
                 <div class="goal-guardian-input-group">
                     <input type="text" class="goal-guardian-input" placeholder="${t.placeholder}" id="gg-input" autocomplete="off">
                     <button class="goal-guardian-submit-btn" id="gg-submit" data-i18n="btn_open">${t.btn_open}</button>
                 </div>
                 <div class="goal-guardian-footer">
                     <div class="goal-guardian-timer" id="gg-timer">
-                        <span data-i18n="timer_prefix">${t.timer_prefix}</span> <span id="gg-countdown">10</span><span data-i18n="timer_suffix">${t.timer_suffix}</span>
+                        <span data-i18n="timer_prefix">${t.timer_prefix}</span> <span id="gg-countdown">${timerDuration}</span><span data-i18n="timer_suffix">${t.timer_suffix}</span>
                     </div>
                     <button class="goal-guardian-skip-btn" id="gg-skip" data-i18n="btn_skip">${t.btn_skip}</button>
                 </div>
@@ -263,7 +272,7 @@
     }
 
     function startTimer() {
-        let count = 10;
+        let count = timerDuration;
         const countEl = document.getElementById('gg-countdown');
         const timerEl = document.getElementById('gg-timer');
         const skipBtn = document.getElementById('gg-skip');
@@ -445,8 +454,11 @@ OUTPUT JSON ONLY: {"allowed": true/false}` }]
         currentVideoId = videoId;
         isChecking = true;
 
-        chrome.storage.sync.get(['protectionEnabled', 'goals', 'apiKey', 'scheduleEnabled', 'scheduleFrom', 'scheduleTo'], async (data) => {
+        chrome.storage.sync.get(['protectionEnabled', 'goals', 'apiKey', 'scheduleEnabled', 'scheduleFrom', 'scheduleTo', 'timerDuration'], async (data) => {
             if (data.protectionEnabled === false || !data.goals) { isChecking = false; return; }
+
+            // Load timer duration from settings (default 10s)
+            timerDuration = data.timerDuration || 10;
 
             // Проверка расписания
             if (data.scheduleEnabled) {
@@ -468,8 +480,8 @@ OUTPUT JSON ONLY: {"allowed": true/false}` }]
             } else if (result.tiredMode) {
                 showTiredBanner();
             } else {
-                // Только тут показываем баннер блокировки
-                createOverlay(title, result.message, false);
+                // Показываем баннер блокировки с причиной от AI
+                createOverlay(title, result.reason || '', false);
             }
             isChecking = false;
         });
